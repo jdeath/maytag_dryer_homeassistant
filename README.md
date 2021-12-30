@@ -1,6 +1,6 @@
 # maytag_dryer_homeassistant
 
-# Bedrock-Homeassistant
+
 
 Core-2021.12.1 or later required
 
@@ -13,11 +13,11 @@ Core-2021.12.1 or later required
 1. Add an entry in configuration.yaml
 1. Add an entry under sensors:
 
-`
+```yaml
 - platform: maytag_dryer
     user: "name@email.com"
     password: "your password"
-`
+```
 
 ### Manual
 
@@ -25,8 +25,8 @@ Core-2021.12.1 or later required
 1. Restart your instance
 1. Add an entry under sensors:
 
-`
+```yaml
 - platform: maytag_dryer
     user: "name@email.com"
     password: "your password"
-`
+```
