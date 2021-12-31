@@ -17,6 +17,7 @@ Core-2021.12.1 or later required
 - platform: maytag_dryer
     user: "name@email.com"
     password: "your password"
+    said: "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
 ```
 
 ### Manual
@@ -29,4 +30,5 @@ Core-2021.12.1 or later required
 - platform: maytag_dryer
     user: "name@email.com"
     password: "your password"
+    said: "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
 ```
