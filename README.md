@@ -22,7 +22,7 @@ Core-2021.12.1 or later required
 
 ### Manual
 
-1. Copy the content of `custom_components/maytag_dryer_homeassistant` into your `custom_components/Bedrock-Homeassistant folder`.
+1. Copy the content of `custom_components/maytag_dryer_homeassistant` into your `custom_components/maytag_dryer_homeassistant`.
 1. Restart your instance
 1. Add an entry under sensors:
 
