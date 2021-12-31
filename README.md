@@ -34,9 +34,9 @@ Core-2021.12.1 or later required
 ```
 
 ### Usage
-You should have a sensor called sensor.sensor.maytag_dryer_"said"
+You should have a sensor called sensor.maytag_dryer_"said" (the said will be lowercase)
 
-Should be compatable with https://github.com/rianadon/timer-bar-card
+It is compatable with https://github.com/rianadon/timer-bar-card
 
 ```
 type: custom:timer-bar-card
