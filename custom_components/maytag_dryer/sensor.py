@@ -21,14 +21,14 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_USER = "user"
 CONF_PASSWORD = "password"
-CONF_SERIAL = "serial"
+CONF_SAID = "said"
 ICON = "mdi:tumble-dryer"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_USER): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
-        vol.Required(CONF_SERIAL): cv.string,
+        vol.Required(CONF_SAID): cv.string,
     }
 )
 
@@ -41,8 +41,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     
     user = config.get(CONF_USER)
     password = config.get(CONF_PASSWORD)
-    serial = config.get(CONF_SERIAL)
-    entities = [maytag_dryerSensor(user,password,serial)]
+    said = config.get(CONF_SAID)
+    entities = [maytag_dryerSensor(user,password,said)]
     if not entities:
         return
     add_entities(entities, True)
@@ -62,13 +62,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 class maytag_dryerSensor(Entity):
     """A class for the mealviewer account."""
 
-    def __init__(self, user, password,serial):
+    def __init__(self, user, password,said):
         """Initialize the sensor."""
                 
         self._name = "Dryer"
         self._user = user
         self._password = password
-        self._serial = serial
+        self._said = said
         self._reauthorize = True
         self._access_token = None
         self._reauthCouter = 0
@@ -83,7 +83,7 @@ class maytag_dryerSensor(Entity):
     def entity_id(self):
         """Return the entity ID."""
         
-        return 'sensor.maytag_dryer_' + (self._serial).lower()
+        return 'sensor.maytag_dryer_' + (self._said).lower()
         
     @property
     def state(self):
@@ -136,7 +136,7 @@ class maytag_dryerSensor(Entity):
                   
                 headers = {}
 
-                new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._serial
+                new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._said
 
                 new_header = {
                     "Authorization": "Bearer " + self._access_token,
@@ -185,7 +185,9 @@ class maytag_dryerSensor(Entity):
                 if self._status == "6":
                     self._state = "Paused"
                 if self._status == "10":
-                    self._state = "Cycle Complete"    
+                    self._state = "Cycle Complete"
+                if self._status == "8":
+                    self._state = "Wrinkle Prevent"    
                     
             except:        
                 self._applianceId = None
