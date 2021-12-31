@@ -1,5 +1,5 @@
 """Sensor for maytag_dryer account status."""
-from datetime import timedelta
+from datetime import timedelta, datetime
 import logging
 import requests
 import arrow
@@ -174,7 +174,9 @@ class maytag_dryerSensor(Entity):
                 self._remoteEnabled = data.get('attributes').get('XCat_RemoteSetRemoteControlEnable').get('value')                    
                 self._timeRemaining = data.get('attributes').get('Cavity_TimeStatusEstTimeRemaining').get('value')                  
                 self._online = data.get('attributes').get('Online').get('value') 
-
+                
+                self._end_time = datetime.now() + timedelta(seconds=int(self._timeRemaining))
+                
                 #status: [0=off, 1=on but not running, 7=running, 6=paused, 10=cycle complete]
                 if self._status == "0":
                     self._state = "Ready"
@@ -216,6 +218,7 @@ class maytag_dryerSensor(Entity):
                 self._timeRemaining = None           
                 self._online = None
                 self._reauthorize = True
+                self._end_time = None
     
     @property
     def extra_state_attributes(self):
@@ -246,7 +249,7 @@ class maytag_dryerSensor(Entity):
         attr["remoteEnabled"]= self._remoteEnabled 
         attr["timeRemaining"]= self._timeRemaining            
         attr["online"]= self._online 
-            
+        attr["end_time"]= self._end_time    
         return attr
 
     
