@@ -1,7 +1,7 @@
 {
   "domain": "maytag_dryer",
   "name": "maytag_dryer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "documentation": "https://www.home-assistant.io/integrations/maytag_dryer",
   "requirements": [],
   "codeowners": []

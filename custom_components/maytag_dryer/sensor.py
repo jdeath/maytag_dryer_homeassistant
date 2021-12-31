@@ -21,13 +21,14 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_USER = "user"
 CONF_PASSWORD = "password"
-
+CONF_SERIAL = "serial"
 ICON = "mdi:tumble-dryer"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_USER): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
+        vol.Required(CONF_SERIAL): cv.string,
     }
 )
 
@@ -40,32 +41,38 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     
     user = config.get(CONF_USER)
     password = config.get(CONF_PASSWORD)
-    entities = [maytag_dryerSensor(user,password)]
+    serial = config.get(CONF_SERIAL)
+    entities = [maytag_dryerSensor(user,password,serial)]
     if not entities:
         return
     add_entities(entities, True)
 
-    # Only one sensor update once every 60 seconds to avoid
-    entity_next = 0
+    # # Only one sensor update once every 60 seconds to avoid
+    # entity_next = 0
 
-    @callback
-    def do_update(time):
-        nonlocal entity_next
-        entities[entity_next].async_schedule_update_ha_state(True)
-        entity_next = (entity_next + 1) % len(entities)
+    # @callback
+    # def do_update(time):
+        # nonlocal entity_next
+        # entities[entity_next].async_schedule_update_ha_state(True)
+        # entity_next = (entity_next + 1) % len(entities)
 
-    track_time_interval(hass, do_update, BASE_INTERVAL)
+    # track_time_interval(hass, do_update, BASE_INTERVAL)
 
 
 class maytag_dryerSensor(Entity):
     """A class for the mealviewer account."""
 
-    def __init__(self, user, password):
+    def __init__(self, user, password,serial):
         """Initialize the sensor."""
                 
         self._name = "Dryer"
         self._user = user
         self._password = password
+        self._serial = serial
+        self._reauthorize = True
+        self._access_token = None
+        self._reauthCouter = 0
+        self._state = "offline"
         
     @property
     def name(self):
@@ -76,22 +83,20 @@ class maytag_dryerSensor(Entity):
     def entity_id(self):
         """Return the entity ID."""
         
-        return 'sensor.maytag_dryer_' + (self._name).lower()
+        return 'sensor.maytag_dryer_' + (self._serial).lower()
         
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self._status
+        return self._state
         
     @property
     def should_poll(self):
         """Turn off polling, will do ourselves."""
-        return False
-        
-    def update(self):
+        return True
+    
+    def authorize(self):
         """Update device state."""
-        
-        
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
             auth_header = {
@@ -110,73 +115,105 @@ class maytag_dryerSensor(Entity):
             r = requests.post(auth_url, data=auth_data, headers=auth_header)
             data = r.json()
 
-            SAID = data.get('SAID')[0]
-            access_token = data.get('access_token')
+            self._access_token = data.get('access_token')
+            self._reauthCouter = 0
+            self._reauthorize = False
+            
+        except: 
+            self._access_token = None
+            self._reauthCouter = self._reauthCouter + 1
+            self._reauthorize = True
+            self._status = "Authorization failed " + self._reauthCouter + " times"
+            self._state = "Authorization failed"
+        
+    def update(self):
+        """Update device state."""
+        if self._reauthorize and self._reauthCouter < 5:
+            self.authorize()
+        
+        if self._access_token is not None:
+            try:
+                  
+                headers = {}
 
-            new_url = 'https://api.whrcloud.com/api/v1/appliance/' + SAID
+                new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._serial
 
-            new_header = {
-                "Authorization": "Bearer " + access_token,
-                "Content-Type": "application/json",
-                "Host": "api.whrcloud.com",
-                "User-Agent": "okhttp/3.12.0",
-                "Pragma": "no-cache",
-                "Cache-Control": "no-cache",
-            }
+                new_header = {
+                    "Authorization": "Bearer " + self._access_token,
+                    "Content-Type": "application/json",
+                    "Host": "api.whrcloud.com",
+                    "User-Agent": "okhttp/3.12.0",
+                    "Pragma": "no-cache",
+                    "Cache-Control": "no-cache",
+                }
 
-            r = requests.get(new_url, data={}, headers=new_header)
-            data = r.json()
+                r = requests.get(new_url, data={}, headers=new_header)
+                data = r.json()
+                
+                self._applianceId = data.get('applianceId')
+                self._lastSynced = data.get('lastFullSyncTime')
+                self._lastModified = data.get('lastModified')
+                self._serialNumber = data.get('attributes').get('XCat_ApplianceInfoSetSerialNumber').get('value')
+                self._doorOpen = data.get('attributes').get('Cavity_OpStatusDoorOpen').get('value')
+                self._status = data.get('attributes').get('Cavity_CycleStatusMachineState').get('value')
+                self._cycleName = data.get('attributes').get('Cavity_CycleSetCycleName').get('value')
+                self._cycleId = data.get('attributes').get('DryCavity_CycleSetCycleSelect').get('value')
+                self._manualDryTime = data.get('attributes').get('DryCavity_CycleSetManualDryTime').get('value')
+                self._drynessLevel = data.get('attributes').get('DryCavity_CycleSetDryness').get('value')
+                self._airflow = data.get('attributes').get('DryCavity_CycleStatusAirFlowStatus').get('value')
+                self._drying = data.get('attributes').get('DryCavity_CycleStatusDrying').get('value')        
+                self._damp = data.get('attributes').get('DryCavity_CycleStatusDamp').get('value')                     
+                self._steaming = data.get('attributes').get('DryCavity_CycleStatusSteaming').get('value')       
+                self._sensing = data.get('attributes').get('DryCavity_CycleStatusSensing').get('value') 
+                self._cooldown = data.get('attributes').get('DryCavity_CycleStatusCoolDown').get('value')     
+                self._temperature = data.get('attributes').get('DryCavity_CycleSetTemperature').get('value')                    
+                self._operations = data.get('attributes').get('Cavity_OpSetOperations').get('value')                      
+                self._powerOnHours = data.get('attributes').get('XCat_OdometerStatusTotalHours').get('value')
+                self._hoursInUse = data.get('attributes').get('XCat_OdometerStatusRunningHours').get('value')    
+                self._totalCycles = data.get('attributes').get('XCat_OdometerStatusCycleCount').get('value')                     
+                self._remoteEnabled = data.get('attributes').get('XCat_RemoteSetRemoteControlEnable').get('value')                    
+                self._timeRemaining = data.get('attributes').get('Cavity_TimeStatusEstTimeRemaining').get('value')                  
+                self._online = data.get('attributes').get('Online').get('value') 
 
-            self._applianceId = data.get('applianceId')
-            self._lastSynced = data.get('lastFullSyncTime')
-            self._lastModified = data.get('lastModified')
-            self._serialNumber = data.get('attributes').get('XCat_ApplianceInfoSetSerialNumber').get('value')
-            self._doorOpen = data.get('attributes').get('Cavity_OpStatusDoorOpen').get('value')
-            self._status = data.get('attributes').get('Cavity_CycleStatusMachineState').get('value')
-            self._cycleName = data.get('attributes').get('Cavity_CycleSetCycleName').get('value')
-            self._cycleId = data.get('attributes').get('DryCavity_CycleSetCycleSelect').get('value')
-            self._manualDryTime = data.get('attributes').get('DryCavity_CycleSetManualDryTime').get('value')
-            self._drynessLevel = data.get('attributes').get('DryCavity_CycleSetDryness').get('value')
-            self._airflow = data.get('attributes').get('DryCavity_CycleStatusAirFlowStatus').get('value')
-            self._drying = data.get('attributes').get('DryCavity_CycleStatusDrying').get('value')        
-            self._damp = data.get('attributes').get('DryCavity_CycleStatusDamp').get('value')                     
-            self._steaming = data.get('attributes').get('DryCavity_CycleStatusSteaming').get('value')       
-            self._sensing = data.get('attributes').get('DryCavity_CycleStatusSensing').get('value') 
-            self._cooldown = data.get('attributes').get('DryCavity_CycleStatusCoolDown').get('value')     
-            self._temperature = data.get('attributes').get('DryCavity_CycleSetTemperature').get('value')                    
-            self._operations = data.get('attributes').get('Cavity_OpSetOperations').get('value')                      
-            self._powerOnHours = data.get('attributes').get('XCat_OdometerStatusTotalHours').get('value')
-            self._hoursInUse = data.get('attributes').get('XCat_OdometerStatusRunningHours').get('value')    
-            self._totalCycles = data.get('attributes').get('XCat_OdometerStatusCycleCount').get('value')                     
-            self._remoteEnabled = data.get('attributes').get('XCat_RemoteSetRemoteControlEnable').get('value')                    
-            self._timeRemaining = data.get('attributes').get('Cavity_TimeStatusEstTimeRemaining').get('value')                  
-            self._online = data.get('attributes').get('Online').get('value')
+                #status: [0=off, 1=on but not running, 7=running, 6=paused, 10=cycle complete]
+                if self._status == "0":
+                    self._state = "Ready"
+                if self._status == "1":
+                    self._state = "Not Running"
+                if self._status == "7":
+                    self._state = "Running" 
+                if self._status == "6":
+                    self._state = "Paused"
+                if self._status == "10":
+                    self._state = "Cycle Complete"    
                     
-        except:        
-            self._applianceId = None
-            self._lastSynced = None
-            self._lastModified = None
-            self._serialNumber = None
-            self._doorOpen = None
-            self._status = None
-            self._cycleName = None
-            self._cycleId = None
-            self._manualDryTime = None
-            self._drynessLevel = None
-            self._airflow = None
-            self._drying = None
-            self._damp = None        
-            self._steaming = None     
-            self._sensing = None
-            self._cooldown = None
-            self._temperature = None                  
-            self._operations = None               
-            self._powerOnHours = None
-            self._hoursInUse = None    
-            self._totalCycles = None
-            self._remoteEnabled = None
-            self._timeRemaining = None           
-            self._online = None
+            except:        
+                self._applianceId = None
+                self._lastSynced = None
+                self._lastModified = None
+                self._serialNumber = None
+                self._doorOpen = None
+                self._status = "Data Update Failed"
+                self._state = "Data Update Failed"
+                self._cycleName = None
+                self._cycleId = None
+                self._manualDryTime = None
+                self._drynessLevel = None
+                self._airflow = None
+                self._drying = None
+                self._damp = None        
+                self._steaming = None     
+                self._sensing = None
+                self._cooldown = None
+                self._temperature = None                  
+                self._operations = None               
+                self._powerOnHours = None
+                self._hoursInUse = None    
+                self._totalCycles = None
+                self._remoteEnabled = None
+                self._timeRemaining = None           
+                self._online = None
+                self._reauthorize = True
     
     @property
     def extra_state_attributes(self):
