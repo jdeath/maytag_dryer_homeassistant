@@ -51,7 +51,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     
     entitiesWasher = [maytag_washerSensor(user,password,said) for said in config.get(CONF_WASHER_SAIDS)]
     if entitiesWasher:
-        add_entities(entities, True)
+        add_entities(entitiesWasher, True)
 
     # # Only one sensor update once every 60 seconds to avoid
     # entity_next = 0
