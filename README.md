@@ -1,6 +1,7 @@
 # maytag_dryer_homeassistant
 
 
+Washer is untested
 
 Core-2021.12.1 or later required
 
@@ -16,8 +17,21 @@ Core-2021.12.1 or later required
 - platform: maytag_dryer
     user: "name@email.com"
     password: "your password"
-    said: "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+    dryersaids:
+       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+    washersaids:
+       - "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
 ```
+Note: If you do not have a washer or a dryer, you need to have the washersaids and dryersaids keys in your configuration, just do not put a ```- "your said"``` in it. eg:
+```yaml
+- platform: maytag_dryer
+    user: "name@email.com"
+    password: "your password"
+    dryersaids:
+       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+    washersaids:
+```
+
 
 ### Manual
 
@@ -29,11 +43,24 @@ Core-2021.12.1 or later required
 - platform: maytag_dryer
     user: "name@email.com"
     password: "your password"
-    said: "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+    dryersaids:
+       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+    washersaids:
+       - "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+```
+Note: If you do not have a washer or a dryer, you need to have the washersaids and dryersaids keys in your configuration, just do not put a ```- "your said"``` in it. eg:
+
+```yaml
+- platform: maytag_dryer
+    user: "name@email.com"
+    password: "your password"
+    dryersaids:
+       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+    washersaids:
 ```
 
 ### Usage
-You should have a sensor called sensor.maytag_dryer_"said" (the said will be lowercase)
+You should have a sensor called sensor.maytag_dryer_"said" and/or sensor.maytag_washer_"said"(the said will be lowercase)
 
 It is compatable with https://github.com/rianadon/timer-bar-card
 
