@@ -230,15 +230,15 @@ class maytag_dryerSensor(Entity):
         """Return the state attributes."""
         attr = {}
         
-        attr["applianceId"]= self._applianceId
-        attr["lastSynced"]= self._lastSynced 
-        attr["lastModified"]= self._lastModified 
-        attr["doorOpen"]= self._doorOpen 
+        attr["applianceid"]= self._applianceId
+        attr["lastsynced"]= self._lastSynced 
+        attr["lastmodified"]= self._lastModified 
+        attr["dooropen"]= self._doorOpen 
         attr["status"]= self._status 
-        attr["cycleName"]= self._cycleName 
-        attr["cycleId"]= self._cycleId 
-        attr["manualDryTime"]= self._manualDryTime 
-        attr["drynessLevel"]= self._drynessLevel
+        attr["cyclename"]= self._cycleName 
+        attr["cycleid"]= self._cycleId 
+        attr["manualdrytime"]= self._manualDryTime 
+        attr["drynesslevel"]= self._drynessLevel
         attr["airflow"]= self._airflow
         attr["drying"]= self._drying 
         attr["damp"]= self._damp         
@@ -247,11 +247,11 @@ class maytag_dryerSensor(Entity):
         attr["cooldown"]= self._cooldown 
         attr["temperature"]= self._temperature                   
         attr["operations"]= self._operations                
-        attr["powerOnHours"]= self._powerOnHours 
-        attr["hoursInUse"]= self._hoursInUse     
-        attr["totalCycles"]= self._totalCycles 
-        attr["remoteEnabled"]= self._remoteEnabled 
-        attr["timeRemaining"]= self._timeRemaining            
+        attr["poweronhours"]= self._powerOnHours 
+        attr["hoursinuse"]= self._hoursInUse     
+        attr["totalcycles"]= self._totalCycles 
+        attr["remoteenabled"]= self._remoteEnabled 
+        attr["timeremaining"]= self._timeRemaining            
         attr["online"]= self._online 
         attr["end_time"]= self._end_time    
         return attr
@@ -446,20 +446,20 @@ class maytag_washerSensor(Entity):
         """Return the state attributes."""
         attr = {}
         
-        attr["applianceId"]= self._applianceId
+        attr["applianceid"]= self._applianceId
         
-        attr["lastSynced"] = self._lastSynced
-        attr["lastModified"] = self._lastModified
-        attr["serialNumber"] = self._serialNumber
-        attr["doorOpen"] = self._doorOpen
-        attr["doorLocked"] = self._doorLocked
-        attr["drawerOpen"] = self._drawerOpen
+        attr["lastsynced"] = self._lastSynced
+        attr["lastmodified"] = self._lastModified
+        attr["serialnumber"] = self._serialNumber
+        attr["dooropen"] = self._doorOpen
+        attr["doorlocked"] = self._doorLocked
+        attr["draweropen"] = self._drawerOpen
                 
-        attr["cycleName"] = self._cycleName
-        attr["cycleId"] = self._cycleId
-        attr["needClean"] = self._needClean
-        attr["delayTime"] = self._delayTime
-        attr["delayRemaining"] = self._delayRemaining
+        attr["cyclename"] = self._cycleName
+        attr["cycleid"] = self._cycleId
+        attr["needclean"] = self._needClean
+        attr["delaytime"] = self._delayTime
+        attr["delayremaining"] = self._delayRemaining
         attr["rinsing"] = self._rinsing
         attr["draining"] = self._draining
         attr["filling"] = self._filling
@@ -467,19 +467,19 @@ class maytag_washerSensor(Entity):
         attr["soaking"] = self._soaking
         attr["sensing"] = self._sensing
         attr["washing"] = self._washing
-        attr["addGarmet"] = self._addGarmet
+        attr["addgarmet"] = self._addGarmet
         attr["temperature"] = self._temperature                    
         attr["operations"] = self._operations                      
-        attr["owerOnHours"] = self._powerOnHours
-        attr["hoursInUse"] = self._hoursInUse    
-        attr["totalCycles"] = self._totalCycles                     
-        attr["remoteEnabled"] = self._remoteEnabled                    
-        attr["timeRemaining"] = self._timeRemaining
-        attr["spinSpeed"] = self._spinSpeed 
-        attr["soilLevel"] = self._soilLevel 
+        attr["oweronhours"] = self._powerOnHours
+        attr["hoursinuse"] = self._hoursInUse    
+        attr["totalcycles"] = self._totalCycles                     
+        attr["remoteenabled"] = self._remoteEnabled                    
+        attr["timeremaining"] = self._timeRemaining
+        attr["spinspeed"] = self._spinSpeed 
+        attr["soillevel"] = self._soilLevel 
         attr["online"] = self._online
         attr["end_time"] = self._end_time
-        
+        attr["status"] = self._status
         return attr
 
     
