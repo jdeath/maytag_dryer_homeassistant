@@ -89,3 +89,22 @@ action:
       message: Dryer Done
 mode: single
 ```
+
+If you want to show other attributes, you can use the entities card
+```
+type: entities
+entities:
+  - type: attribute
+    entity: sensor.maytag_dryer_xxx
+    attribute: applianceid
+```
+
+You can also make template sensors in your configuration.yaml
+```
+sensor:
+  - platform: template
+    sensors:
+      washer_temp_setting:
+        friendly_name: "Dryer Temperature"
+        value_template: "{{ state_attr('sensor.maytag_dryer_xxxx', 'temperature') }}"
+```
