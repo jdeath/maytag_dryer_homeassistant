@@ -16,7 +16,6 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utc_from_timestamp
-
 _LOGGER = logging.getLogger(__name__)
 
 CONF_USER = "user"
@@ -25,6 +24,13 @@ CONF_DRYER_SAIDS = "dryersaids"
 CONF_WASHER_SAIDS = "washersaids"
 ICON_D = "mdi:tumble-dryer"
 ICON_W = "mdi:washing-machine"
+UNIT_STATES = {"0":"Ready",
+               "1":"Not Running",
+               "6":"Paused",
+               "7":"Running",
+               "8":"Wrinkle Prevent",
+               "10":"Cycle Complete"
+              }
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -69,7 +75,6 @@ class maytag_dryerSensor(Entity):
 
     def __init__(self, user, password,said):
         """Initialize the sensor."""
-                
         self._name = "Dryer"
         self._user = user
         self._password = password
@@ -123,14 +128,15 @@ class maytag_dryerSensor(Entity):
             self._access_token = data.get('access_token')
             self._reauthCouter = 0
             self._reauthorize = False
-            
+            self._status = "Authorized"
+ 
         except: 
             self._access_token = None
             self._reauthCouter = self._reauthCouter + 1
             self._reauthorize = True
             self._status = "Authorization failed " + self._reauthCouter + " times"
             self._state = "Authorization failed"
-        
+
     def update(self):
         """Update device state."""
         if self._reauthorize and self._reauthCouter < 5:
@@ -183,18 +189,7 @@ class maytag_dryerSensor(Entity):
                 self._end_time = datetime.now() + timedelta(seconds=int(self._timeRemaining))
                 
                 #status: [0=off, 1=on but not running, 7=running, 6=paused, 10=cycle complete]
-                if self._status == "0":
-                    self._state = "Ready"
-                if self._status == "1":
-                    self._state = "Not Running"
-                if self._status == "7":
-                    self._state = "Running" 
-                if self._status == "6":
-                    self._state = "Paused"
-                if self._status == "10":
-                    self._state = "Cycle Complete"
-                if self._status == "8":
-                    self._state = "Wrinkle Prevent"    
+                self._state =  UNIT_STATES.get(self._status,self._status)
                     
             except:        
                 self._applianceId = None
@@ -224,6 +219,10 @@ class maytag_dryerSensor(Entity):
                 self._online = None
                 self._reauthorize = True
                 self._end_time = None
+        else: # No token... try again!
+            self._reauthorize = True
+
+
     
     @property
     def extra_state_attributes(self):
@@ -253,7 +252,9 @@ class maytag_dryerSensor(Entity):
         attr["remoteenabled"]= self._remoteEnabled 
         attr["timeremaining"]= self._timeRemaining            
         attr["online"]= self._online 
-        attr["end_time"]= self._end_time    
+        attr["end_time"]= self._end_time 
+        attr["reauth_cnt"]= self._reauthCouter
+
         return attr
 
     
@@ -269,7 +270,6 @@ class maytag_washerSensor(Entity):
 
     def __init__(self, user, password,said):
         """Initialize the sensor."""
-                
         self._name = "washer"
         self._user = user
         self._password = password
@@ -278,7 +278,8 @@ class maytag_washerSensor(Entity):
         self._access_token = None
         self._reauthCouter = 0
         self._state = "offline"
-        
+        self._updateCounter = 0
+
     @property
     def name(self):
         """Return the name of the sensor."""
@@ -354,7 +355,6 @@ class maytag_washerSensor(Entity):
 
                 r = requests.get(new_url, data={}, headers=new_header)
                 data = r.json()
-                
                 self._applianceId = data.get('applianceId')
                 self._lastSynced = data.get('lastFullSyncTime')
                 self._lastModified = data.get('lastModified')
@@ -387,24 +387,15 @@ class maytag_washerSensor(Entity):
                 self._soilLevel = data.get('attributes').get('WashCavity_CycleSetSoilLevel').get('value') 
                 self._online = data.get('attributes').get('Online').get('value') 
                 self._end_time = datetime.now() + timedelta(seconds=int(self._timeRemaining))
-                
                 #status: [0=off, 1=on but not running, 7=running, 6=paused, 10=cycle complete]
-                if self._status == "0":
-                    self._state = "Ready"
-                if self._status == "1":
-                    self._state = "Not Running"
-                if self._status == "7":
-                    self._state = "Running" 
-                if self._status == "6":
-                    self._state = "Paused"
-                if self._status == "10":
-                    self._state = "Cycle Complete"
-                    
+
+                self._state = UNIT_STATES.get(self._status,self._status)                 
+                self._updateCounter = self._updateCounter + 1
                     
             except:        
                 
                 self._status = "Data Update Failed"
-                self._state = "Data Update Failed"
+                self._state = "Data Update Failed" 
                 self._applianceId = None
                 self._lastSynced = None
                 self._lastModified = None
@@ -439,8 +430,11 @@ class maytag_washerSensor(Entity):
                 self._end_time = None
                 
                 self._reauthorize = True
-                
-    
+        else: # No token... try again!
+            self._reauthorize = True
+
+
+
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
@@ -480,6 +474,8 @@ class maytag_washerSensor(Entity):
         attr["online"] = self._online
         attr["end_time"] = self._end_time
         attr["status"] = self._status
+        attr["auth_cnt"]= self._reauthCouter
+        attr["update_count"]= self._updateCounter
         return attr
 
     
