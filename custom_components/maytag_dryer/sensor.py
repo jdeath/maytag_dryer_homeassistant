@@ -160,7 +160,6 @@ class maytag_dryerSensor(Entity):
 
                 r = requests.get(new_url, data={}, headers=new_header)
                 data = r.json()
-                _LOGGER.error("I've failed to update: data %s",data)
                 
                 self._applianceId = data.get('applianceId')
                 self._lastSynced = data.get('lastFullSyncTime')
@@ -395,8 +394,8 @@ class maytag_washerSensor(Entity):
                     
             except:        
                 
-                self._status = "Data Update Failed "
-                self._state = "Data Update Failed " 
+                self._status = "Data Update Failed"
+                self._state = "Data Update Failed" 
                 self._applianceId = None
                 self._lastSynced = None
                 self._lastModified = None
