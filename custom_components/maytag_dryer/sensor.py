@@ -361,7 +361,7 @@ class maytag_washerSensor(Entity):
                 self._serialNumber = data.get('attributes').get('XCat_ApplianceInfoSetSerialNumber').get('value')
                 self._doorOpen = data.get('attributes').get('Cavity_OpStatusDoorOpen').get('value')
                 self._doorLocked = data.get('attributes').get('Cavity_OpStatusDoorLocked').get('value')
-                self._drawerOpen = data.get('attributes').get('WashCavity_OpStatusDispenserDrawerOpen').get('value')
+                self._drawerOpen = data.get('attributes').get('WashCavity_OpStatusDispenserDrawerOpen', {}).get('value')
                 self._status = data.get('attributes').get('Cavity_CycleStatusMachineState').get('value')
                 self._cycleName = data.get('attributes').get('Cavity_CycleSetCycleName').get('value')
                 self._cycleId = data.get('attributes').get('WashCavity_CycleSetCycleSelect').get('value')
