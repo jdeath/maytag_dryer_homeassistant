@@ -162,6 +162,7 @@ class maytag_dryerSensor(Entity):
                 data = r.json()
                 
                 self._applianceId = data.get('applianceId')
+                self._modelNumber = data.get('attributes').get('ModelNumber').get('value')
                 self._lastSynced = data.get('lastFullSyncTime')
                 self._lastModified = data.get('lastModified')
                 self._serialNumber = data.get('attributes').get('XCat_ApplianceInfoSetSerialNumber').get('value')
@@ -191,7 +192,8 @@ class maytag_dryerSensor(Entity):
                 #status: [0=off, 1=on but not running, 7=running, 6=paused, 10=cycle complete]
                 self._state =  UNIT_STATES.get(self._status,self._status)
                     
-            except:        
+            except:     
+                self._modelNumber = None
                 self._applianceId = None
                 self._lastSynced = None
                 self._lastModified = None
@@ -229,6 +231,7 @@ class maytag_dryerSensor(Entity):
         """Return the state attributes."""
         attr = {}
         
+        attr["modelNumber"] = self._modelNumber
         attr["applianceid"]= self._applianceId
         attr["lastsynced"]= self._lastSynced 
         attr["lastmodified"]= self._lastModified 
@@ -356,6 +359,7 @@ class maytag_washerSensor(Entity):
                 r = requests.get(new_url, data={}, headers=new_header)
                 data = r.json()
                 self._applianceId = data.get('applianceId')
+                self._modelNumber = data.get('attributes').get('ModelNumber').get('value')
                 self._lastSynced = data.get('lastFullSyncTime')
                 self._lastModified = data.get('lastModified')
                 self._serialNumber = data.get('attributes').get('XCat_ApplianceInfoSetSerialNumber').get('value')
@@ -381,7 +385,13 @@ class maytag_washerSensor(Entity):
                 self._powerOnHours = data.get('attributes').get('XCat_OdometerStatusTotalHours').get('value')
                 self._hoursInUse = data.get('attributes').get('XCat_OdometerStatusRunningHours').get('value')    
                 self._totalCycles = data.get('attributes').get('XCat_OdometerStatusCycleCount').get('value')                     
-                self._remoteEnabled = data.get('attributes').get('XCat_RemoteSetRemoteControlEnable').get('value')                    
+                self._remoteEnabled = data.get('attributes').get('XCat_RemoteSetRemoteControlEnable').get('value')
+                
+              
+                self._dispense1Enable = data.get('attributes').get('WashCavity_CycleSetBulkDispense1Enable', {}).get('value')
+                self._dispense1Level = data.get('attributes').get('WashCavity_OpStatusBulkDispense1Level', {}).get('value')
+                self._dispense1Concentration = data.get('attributes').get('WashCavity_OpSetBulkDispense1Concentration', {}).get('value')
+                
                 self._timeRemaining = data.get('attributes').get('Cavity_TimeStatusEstTimeRemaining').get('value') 
                 self._spinSpeed = data.get('attributes').get('WashCavity_CycleSetSpinSpeed').get('value') 
                 self._soilLevel = data.get('attributes').get('WashCavity_CycleSetSoilLevel').get('value') 
@@ -397,6 +407,7 @@ class maytag_washerSensor(Entity):
                 self._status = "Data Update Failed"
                 self._state = "Data Update Failed" 
                 self._applianceId = None
+                self._modelNumber = None
                 self._lastSynced = None
                 self._lastModified = None
                 self._serialNumber = None
@@ -429,6 +440,10 @@ class maytag_washerSensor(Entity):
                 self._online = None
                 self._end_time = None
                 
+                self._dispense1Enable = None
+                self._dispense1Level = None
+                self._dispense1Concentration = None
+                
                 self._reauthorize = True
         else: # No token... try again!
             self._reauthorize = True
@@ -441,7 +456,7 @@ class maytag_washerSensor(Entity):
         attr = {}
         
         attr["applianceid"]= self._applianceId
-        
+        attr["modelNumber"] = self._modelNumber
         attr["lastsynced"] = self._lastSynced
         attr["lastmodified"] = self._lastModified
         attr["serialnumber"] = self._serialNumber
@@ -476,6 +491,12 @@ class maytag_washerSensor(Entity):
         attr["status"] = self._status
         attr["auth_cnt"]= self._reauthCouter
         attr["update_count"]= self._updateCounter
+        
+        attr["dispense_concentration"] = self._dispense1Concentration
+        attr["dispense_enable"] = self._dispense1Enable 
+        attr["dispense_level"]  = self._dispense1Level
+        
+  
         return attr
 
     
