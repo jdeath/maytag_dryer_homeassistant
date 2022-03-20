@@ -1,7 +1,7 @@
 # maytag_dryer_homeassistant
 
 
-Washer is untested
+Check out the newer version by mkmer: https://github.com/mkmer/whirlpool_laundry  it has more features and easier to setup.
 
 Core-2021.12.1 or later required
 
