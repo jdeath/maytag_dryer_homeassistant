@@ -1,7 +1,7 @@
 # maytag_dryer_homeassistant
 
 
-Check out the newer version by mkmer: https://github.com/mkmer/whirlpool_laundry  it has more features and easier to setup.
+This capability has now been integrated into homeassistant >2023.2.1 by mkmer. That version handles the state names differntly and has seperate entities for the durration. I am sticking with this integration, but you may like the "official" version better as it has GUI setup and no need to specifify your SAID.
 
 Core-2021.12.1 or later required
 
