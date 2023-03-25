@@ -15,21 +15,21 @@ Core-2021.12.1 or later required
 
 ```yaml
 - platform: maytag_dryer
-    user: "name@email.com"
-    password: "your password"
-    dryersaids:
-      - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
-    washersaids:
-      - "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+  user: "name@email.com"
+  password: "your password"
+  dryersaids:
+    - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+  washersaids:
+     - "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
 ```
 Note: If you do not have a washer or a dryer, you need to have the washersaids and dryersaids keys in your configuration, just do not put a ```- "your said"``` in it. eg:
 ```yaml
 - platform: maytag_dryer
-    user: "name@email.com"
-    password: "your password"
-    dryersaids:
-       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
-    washersaids:
+  user: "name@email.com"
+  password: "your password"
+  dryersaids:
+    - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+  washersaids:
 ```
 
 
@@ -41,22 +41,22 @@ Note: If you do not have a washer or a dryer, you need to have the washersaids a
 
 ```yaml
 - platform: maytag_dryer
-    user: "name@email.com"
-    password: "your password"
-    dryersaids:
-       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
-    washersaids:
-       - "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+  user: "name@email.com"
+  password: "your password"
+  dryersaids:
+    - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+  washersaids:
+    - "your washer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
 ```
 Note: If you do not have a washer or a dryer, you need to have the washersaids and dryersaids keys in your configuration, just do not put a ```- "your said"``` in it. eg:
 
 ```yaml
 - platform: maytag_dryer
-    user: "name@email.com"
-    password: "your password"
-    dryersaids:
-       - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
-    washersaids:
+  user: "name@email.com"
+  password: "your password"
+  dryersaids:
+    - "your dryer SAID" # done to allow multiple devices on your account. Use uppercase letters, use the "SAID" shown in the maytag app
+  washersaids:
 ```
 
 ### Usage
