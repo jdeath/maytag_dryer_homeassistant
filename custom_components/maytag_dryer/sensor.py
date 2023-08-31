@@ -16,6 +16,11 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.event import track_time_interval
 from homeassistant.util.dt import utc_from_timestamp
+
+import asyncio
+from aiohttp import ClientError, ClientResponseError
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
 _LOGGER = logging.getLogger(__name__)
 
 CONF_USER = "user"
@@ -42,38 +47,27 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 
-BASE_INTERVAL = timedelta(minutes=5)
+BASE_INTERVAL = timedelta(minutes=2)
+SCAN_INTERVAL = timedelta(minutes=2)
 
-
-def setup_platform(hass, config, add_entities, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the maytag_dryer platform."""
     
     user = config.get(CONF_USER)
     password = config.get(CONF_PASSWORD)
     
-    entitiesDryer = [maytag_dryerSensor(user,password,said) for said in config.get(CONF_DRYER_SAIDS)]
+    entitiesDryer = [maytag_dryerSensor(hass,user,password,said) for said in config.get(CONF_DRYER_SAIDS)]
     if entitiesDryer:
-        add_entities(entitiesDryer, True)
+        async_add_entities(entitiesDryer, True)
     
-    entitiesWasher = [maytag_washerSensor(user,password,said) for said in config.get(CONF_WASHER_SAIDS)]
+    entitiesWasher = [maytag_washerSensor(hass,user,password,said) for said in config.get(CONF_WASHER_SAIDS)]
     if entitiesWasher:
-        add_entities(entitiesWasher, True)
-
-    # # Only one sensor update once every 60 seconds to avoid
-    # entity_next = 0
-
-    # @callback
-    # def do_update(time):
-        # nonlocal entity_next
-        # entities[entity_next].async_schedule_update_ha_state(True)
-        # entity_next = (entity_next + 1) % len(entities)
-
-    # track_time_interval(hass, do_update, BASE_INTERVAL)
-
+        async_add_entities(entitiesWasher, True)
+    
 class maytag_dryerSensor(Entity):
     """A class for the mealviewer account."""
 
-    def __init__(self, user, password,said):
+    def __init__(self, hass, user, password,said):
         """Initialize the sensor."""
         self._name = "Dryer"
         self._user = user
@@ -83,6 +77,7 @@ class maytag_dryerSensor(Entity):
         self._access_token = None
         self._reauthCouter = 0
         self._state = "offline"
+        self.hass = hass
         
     @property
     def name(self):
@@ -92,7 +87,6 @@ class maytag_dryerSensor(Entity):
     @property
     def entity_id(self):
         """Return the entity ID."""
-        
         return 'sensor.maytag_dryer_' + (self._said).lower()
         
     @property
@@ -105,7 +99,7 @@ class maytag_dryerSensor(Entity):
         """Turn off polling, will do ourselves."""
         return True
     
-    def authorize(self):
+    async def authorize(self):
         """Update device state."""
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
@@ -122,9 +116,9 @@ class maytag_dryerSensor(Entity):
             }
 
             headers = {}
-            r = requests.post(auth_url, data=auth_data, headers=auth_header)
-            data = r.json()
-
+            session = async_get_clientsession(self.hass)
+            resp = await session.post(auth_url, data=auth_data, headers=auth_header)
+            data = await resp.json()
             self._access_token = data.get('access_token')
             self._reauthCouter = 0
             self._reauthorize = False
@@ -137,14 +131,14 @@ class maytag_dryerSensor(Entity):
             self._status = "Authorization failed " + self._reauthCouter + " times"
             self._state = "Authorization failed"
 
-    def update(self):
+    async def async_update(self):
         """Update device state."""
         if self._reauthorize and self._reauthCouter < 5:
-            self.authorize()
+            await self.authorize()
+        
         
         if self._access_token is not None:
             try:
-                  
                 headers = {}
 
                 new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._said
@@ -157,10 +151,10 @@ class maytag_dryerSensor(Entity):
                     "Pragma": "no-cache",
                     "Cache-Control": "no-cache",
                 }
-
-                r = requests.get(new_url, data={}, headers=new_header)
-                data = r.json()
                 
+                session = async_get_clientsession(self.hass)
+                resp = await session.get(new_url, data={}, headers=new_header)
+                data = await resp.json()
                 self._applianceId = data.get('applianceId')
                 self._modelNumber = data.get('attributes').get('ModelNumber').get('value')
                 self._lastSynced = data.get('lastFullSyncTime')
@@ -271,7 +265,7 @@ class maytag_washerSensor(Entity):
     
     """A class for the mealviewer account."""
 
-    def __init__(self, user, password,said):
+    def __init__(self, hass, user, password,said):
         """Initialize the sensor."""
         self._name = "washer"
         self._user = user
@@ -282,6 +276,7 @@ class maytag_washerSensor(Entity):
         self._reauthCouter = 0
         self._state = "offline"
         self._updateCounter = 0
+        self.hass = hass
 
     @property
     def name(self):
@@ -304,7 +299,7 @@ class maytag_washerSensor(Entity):
         """Turn off polling, will do ourselves."""
         return True
     
-    def authorize(self):
+    async def authorize(self):
         """Update device state."""
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
@@ -321,8 +316,9 @@ class maytag_washerSensor(Entity):
             }
 
             headers = {}
-            r = requests.post(auth_url, data=auth_data, headers=auth_header)
-            data = r.json()
+            session = async_get_clientsession(self.hass)
+            resp = await session.post(auth_url, data=auth_data, headers=auth_header)
+            data = await resp.json()
 
             self._access_token = data.get('access_token')
             self._reauthCouter = 0
@@ -335,10 +331,10 @@ class maytag_washerSensor(Entity):
             self._status = "Authorization failed " + self._reauthCouter + " times"
             self._state = "Authorization failed"
         
-    def update(self):
+    async def async_update(self):
         """Update device state."""
         if self._reauthorize and self._reauthCouter < 5:
-            self.authorize()
+            await self.authorize()
         
         if self._access_token is not None:
             try:
@@ -356,8 +352,10 @@ class maytag_washerSensor(Entity):
                     "Cache-Control": "no-cache",
                 }
 
-                r = requests.get(new_url, data={}, headers=new_header)
-                data = r.json()
+                session = async_get_clientsession(self.hass)
+                resp = await session.get(new_url, data={}, headers=new_header)
+                data = await resp.json()
+                
                 self._applianceId = data.get('applianceId')
                 self._modelNumber = data.get('attributes').get('ModelNumber').get('value')
                 self._lastSynced = data.get('lastFullSyncTime')
