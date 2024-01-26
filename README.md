@@ -108,3 +108,9 @@ sensor:
         friendly_name: "Dryer Temperature"
         value_template: "{{ state_attr('sensor.maytag_dryer_xxxx', 'temperature') }}"
 ```
+### Troubleshooting
+If you have model Dyrer model `MED6230HW1` , you need to comment out line 169:
+
+`self._airflow = data.get('attributes').get('DryCavity_CycleStatusAirFlowStatus').get('value')`
+
+Some models do not report certain fields. If you have an issue, try removing fields until you find the offending one. Or use the offical integration, which has better error handling.
