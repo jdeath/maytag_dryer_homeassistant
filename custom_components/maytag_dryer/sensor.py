@@ -105,9 +105,11 @@ class maytag_dryerSensor(Entity):
             auth_url = "https://api.whrcloud.com/oauth/token"
             auth_header = {
                 "Content-Type": "application/x-www-form-urlencoded",    
+                "User-Agent": "okhttp/3.12.0",
             }
 
             auth_data = {
+                "User-Agent": "okhttp/3.12.0",
                 "client_id": "maytag_ios",
                 "client_secret": "OfTy3A3rV4BHuhujkPThVDE9-SFgOymJyUrSbixjViATjCGviXucSKq2OxmPWm8DDj9D1IFno_mZezTYduP-Ig",
                 "grant_type": "password",
@@ -304,10 +306,12 @@ class maytag_washerSensor(Entity):
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
             auth_header = {
-                "Content-Type": "application/x-www-form-urlencoded",    
+                "Content-Type": "application/x-www-form-urlencoded",
+                "User-Agent": "okhttp/3.12.0",
             }
 
             auth_data = {
+                "User-Agent": "okhttp/3.12.0",
                 "client_id": "maytag_ios",
                 "client_secret": "OfTy3A3rV4BHuhujkPThVDE9-SFgOymJyUrSbixjViATjCGviXucSKq2OxmPWm8DDj9D1IFno_mZezTYduP-Ig",
                 "grant_type": "password",
