@@ -1,5 +1,5 @@
 # Breaking Change
-Revert to Version 1.0 of this integration. As of 3/29/2024 the asynchronous calls to the API are not working. Not sure how long this will keep working.
+As of 3/29/2024, update to Version 1.1 of this integration.
 
 # maytag_dryer_homeassistant
 
