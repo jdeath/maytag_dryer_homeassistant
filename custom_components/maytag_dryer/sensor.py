@@ -104,17 +104,27 @@ class maytag_dryerSensor(Entity):
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
             auth_header = {
-                "Content-Type": "application/x-www-form-urlencoded",    
-                "User-Agent": "okhttp/3.12.0",
+                'no_auth': 'true',
+                'wp-client-brand': 'MAYTAG',
+                'wp-client-region': 'NAR',
+                'wp-client-country': 'US',
+                'wp-client-language': 'eng',
+                'wp-client-version': '5.1.0',
+                'wp-client-appname': 'com.maytag.android.mtapp',
+                'wp-client-platform': 'ANDROID',
+                'content-type': 'application/x-www-form-urlencoded',
+                'user-agent': 'okhttp/4.12.0',
             }
-
+    
+    
             auth_data = {
-                "User-Agent": "okhttp/3.12.0",
-                "client_id": "maytag_ios",
-                "client_secret": "OfTy3A3rV4BHuhujkPThVDE9-SFgOymJyUrSbixjViATjCGviXucSKq2OxmPWm8DDj9D1IFno_mZezTYduP-Ig",
-                "grant_type": "password",
-                "username": self._user,
-                "password": self._password,
+                'client_id': 'maytag_android_v1',
+                'client_secret': 'f1XfYji_D9KfZGovyp8PMgRzrFKjhjY26TV0hu3Mt1-tCCNPl9s95z7QLUfB9UgB',
+                'wp-client-brand': 'MAYTAG',
+                'wp-client-region': 'NAR',
+                'grant_type': 'password',
+                'username': self._user,
+                'password': self._password,
             }
 
             headers = {}
@@ -144,15 +154,27 @@ class maytag_dryerSensor(Entity):
                 headers = {}
 
                 new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._said
-
+                
                 new_header = {
-                    "Authorization": "Bearer " + self._access_token,
-                    "Content-Type": "application/json",
-                    "Host": "api.whrcloud.com",
-                    "User-Agent": "okhttp/3.12.0",
-                    "Pragma": "no-cache",
-                    "Cache-Control": "no-cache",
+                    'wp-client-brand': 'MAYTAG',
+                    'wp-client-region': 'NAR',
+                    'wp-client-country': 'US',
+                    'wp-client-language': 'eng',
+                    'wp-client-version': '5.1.0',
+                    'wp-client-appname': 'com.maytag.android.mtapp',
+                    'wp-client-platform': 'ANDROID',
+                    "Authorization": "bearer " + self._access_token,
+                    'user-agent': 'okhttp/4.12.0',
                 }
+ 
+                # new_header = {
+                    # "Authorization": "Bearer " + self._access_token,
+                    # "Content-Type": "application/json",
+                    # "Host": "api.whrcloud.com",
+                    # "User-Agent": "okhttp/4.12.0",
+                    # "Pragma": "no-cache",
+                    # "Cache-Control": "no-cache",
+                # }
                 
                 session = async_get_clientsession(self.hass)
                 resp = await session.get(new_url, data={}, headers=new_header)
@@ -305,20 +327,36 @@ class maytag_washerSensor(Entity):
         """Update device state."""
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
+            # auth_header = {
+                # "Content-Type": "application/x-www-form-urlencoded",
+                # "User-Agent": "okhttp/4.12.0",
+            # }
+
             auth_header = {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "User-Agent": "okhttp/3.12.0",
+                'no_auth': 'true',
+                'wp-client-brand': 'MAYTAG',
+                'wp-client-region': 'NAR',
+                'wp-client-country': 'US',
+                'wp-client-language': 'eng',
+                'wp-client-version': '5.1.0',
+                'wp-client-appname': 'com.maytag.android.mtapp',
+                'wp-client-platform': 'ANDROID',
+                'content-type': 'application/x-www-form-urlencoded',
+                'user-agent': 'okhttp/4.12.0',
             }
-
+    
+    
             auth_data = {
-                "User-Agent": "okhttp/3.12.0",
-                "client_id": "maytag_ios",
-                "client_secret": "OfTy3A3rV4BHuhujkPThVDE9-SFgOymJyUrSbixjViATjCGviXucSKq2OxmPWm8DDj9D1IFno_mZezTYduP-Ig",
-                "grant_type": "password",
-                "username": self._user,
-                "password": self._password,
+                'client_id': 'maytag_android_v1',
+                'client_secret': 'f1XfYji_D9KfZGovyp8PMgRzrFKjhjY26TV0hu3Mt1-tCCNPl9s95z7QLUfB9UgB',
+                'wp-client-brand': 'MAYTAG',
+                'wp-client-region': 'NAR',
+                'grant_type': 'password',
+                'username': self._user,
+                'password': self._password,
             }
-
+            
+            
             headers = {}
             session = async_get_clientsession(self.hass)
             resp = await session.post(auth_url, data=auth_data, headers=auth_header)
@@ -348,18 +386,30 @@ class maytag_washerSensor(Entity):
                 new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._said
 
                 new_header = {
-                    "Authorization": "Bearer " + self._access_token,
-                    "Content-Type": "application/json",
-                    "Host": "api.whrcloud.com",
-                    "User-Agent": "okhttp/3.12.0",
-                    "Pragma": "no-cache",
-                    "Cache-Control": "no-cache",
+                    'wp-client-brand': 'MAYTAG',
+                    'wp-client-region': 'NAR',
+                    'wp-client-country': 'US',
+                    'wp-client-language': 'eng',
+                    'wp-client-version': '5.1.0',
+                    'wp-client-appname': 'com.maytag.android.mtapp',
+                    'wp-client-platform': 'ANDROID',
+                    "Authorization": "bearer " + self._access_token,
+                    'user-agent': 'okhttp/4.12.0',
                 }
+ 
+                # new_header = {
+                    # "Authorization": "Bearer " + self._access_token,
+                    # "Content-Type": "application/json",
+                    # "Host": "api.whrcloud.com",
+                    # "User-Agent": "okhttp/4.12.0",
+                    # "Pragma": "no-cache",
+                    # "Cache-Control": "no-cache",
+                # }
 
                 session = async_get_clientsession(self.hass)
                 resp = await session.get(new_url, data={}, headers=new_header)
                 data = await resp.json()
-                
+                _LOGGER.debug(data)
                 self._applianceId = data.get('applianceId')
                 self._modelNumber = data.get('attributes').get('ModelNumber').get('value')
                 self._lastSynced = data.get('lastFullSyncTime')
