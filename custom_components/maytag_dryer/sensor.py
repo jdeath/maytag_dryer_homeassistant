@@ -104,14 +104,14 @@ class maytag_dryerSensor(Entity):
         try:
             auth_url = "https://api.whrcloud.com/oauth/token"
             auth_header = {
-                'no_auth': 'true',
-                'wp-client-brand': 'MAYTAG',
-                'wp-client-region': 'NAR',
-                'wp-client-country': 'US',
-                'wp-client-language': 'eng',
-                'wp-client-version': '5.1.0',
-                'wp-client-appname': 'com.maytag.android.mtapp',
-                'wp-client-platform': 'ANDROID',
+#                'no_auth': 'true',
+#                'wp-client-brand': 'MAYTAG',
+#                'wp-client-region': 'NAR',
+#                'wp-client-country': 'US',
+#                'wp-client-language': 'eng',
+#                'wp-client-version': '5.1.0',
+#                'wp-client-appname': 'com.maytag.android.mtapp',
+#                'wp-client-platform': 'ANDROID',
                 'content-type': 'application/x-www-form-urlencoded',
                 'user-agent': 'okhttp/4.12.0',
             }
@@ -120,8 +120,8 @@ class maytag_dryerSensor(Entity):
             auth_data = {
                 'client_id': 'maytag_android_v1',
                 'client_secret': 'f1XfYji_D9KfZGovyp8PMgRzrFKjhjY26TV0hu3Mt1-tCCNPl9s95z7QLUfB9UgB',
-                'wp-client-brand': 'MAYTAG',
-                'wp-client-region': 'NAR',
+#                'wp-client-brand': 'MAYTAG',
+#                'wp-client-region': 'NAR',
                 'grant_type': 'password',
                 'username': self._user,
                 'password': self._password,
@@ -156,13 +156,13 @@ class maytag_dryerSensor(Entity):
                 new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._said
                 
                 new_header = {
-                    'wp-client-brand': 'MAYTAG',
-                    'wp-client-region': 'NAR',
-                    'wp-client-country': 'US',
-                    'wp-client-language': 'eng',
-                    'wp-client-version': '5.1.0',
-                    'wp-client-appname': 'com.maytag.android.mtapp',
-                    'wp-client-platform': 'ANDROID',
+#                    'wp-client-brand': 'MAYTAG',
+#                    'wp-client-region': 'NAR',
+#                    'wp-client-country': 'US',
+#                    'wp-client-language': 'eng',
+#                    'wp-client-version': '5.1.0',
+#                    'wp-client-appname': 'com.maytag.android.mtapp',
+#                    'wp-client-platform': 'ANDROID',
                     "Authorization": "bearer " + self._access_token,
                     'user-agent': 'okhttp/4.12.0',
                 }
@@ -334,13 +334,13 @@ class maytag_washerSensor(Entity):
 
             auth_header = {
                 'no_auth': 'true',
-                'wp-client-brand': 'MAYTAG',
-                'wp-client-region': 'NAR',
-                'wp-client-country': 'US',
-                'wp-client-language': 'eng',
-                'wp-client-version': '5.1.0',
-                'wp-client-appname': 'com.maytag.android.mtapp',
-                'wp-client-platform': 'ANDROID',
+#                'wp-client-brand': 'MAYTAG',
+#                'wp-client-region': 'NAR',
+#                'wp-client-country': 'US',
+#                'wp-client-language': 'eng',
+#                'wp-client-version': '5.1.0',
+#                'wp-client-appname': 'com.maytag.android.mtapp',
+#                'wp-client-platform': 'ANDROID',
                 'content-type': 'application/x-www-form-urlencoded',
                 'user-agent': 'okhttp/4.12.0',
             }
@@ -349,8 +349,8 @@ class maytag_washerSensor(Entity):
             auth_data = {
                 'client_id': 'maytag_android_v1',
                 'client_secret': 'f1XfYji_D9KfZGovyp8PMgRzrFKjhjY26TV0hu3Mt1-tCCNPl9s95z7QLUfB9UgB',
-                'wp-client-brand': 'MAYTAG',
-                'wp-client-region': 'NAR',
+#                'wp-client-brand': 'MAYTAG',
+#                'wp-client-region': 'NAR',
                 'grant_type': 'password',
                 'username': self._user,
                 'password': self._password,
@@ -386,13 +386,13 @@ class maytag_washerSensor(Entity):
                 new_url = 'https://api.whrcloud.com/api/v1/appliance/' + self._said
 
                 new_header = {
-                    'wp-client-brand': 'MAYTAG',
-                    'wp-client-region': 'NAR',
-                    'wp-client-country': 'US',
-                    'wp-client-language': 'eng',
-                    'wp-client-version': '5.1.0',
-                    'wp-client-appname': 'com.maytag.android.mtapp',
-                    'wp-client-platform': 'ANDROID',
+#                    'wp-client-brand': 'MAYTAG',
+#                    'wp-client-region': 'NAR',
+#                    'wp-client-country': 'US',
+#                    'wp-client-language': 'eng',
+#                    'wp-client-version': '5.1.0',
+#                    'wp-client-appname': 'com.maytag.android.mtapp',
+#                    'wp-client-platform': 'ANDROID',
                     "Authorization": "bearer " + self._access_token,
                     'user-agent': 'okhttp/4.12.0',
                 }
