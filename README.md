@@ -1,5 +1,5 @@
 # Breaking Change
-As of 3/29/2024, update to Version 1.2 of this integration.
+As of 1/01/2025, update to Version 1.4 of this integration.
 
 # maytag_dryer_homeassistant
 
