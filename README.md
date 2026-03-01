@@ -135,7 +135,7 @@ mode: single
 ```
 
 ### Troubleshooting
-If you have model Dyrer model `MED6230HW1` , you need to comment out line 169:
+If you have model Dryer model `MED6230HW1` , you need to comment out line 169:
 
 `self._airflow = data.get('attributes').get('DryCavity_CycleStatusAirFlowStatus').get('value')`
 
