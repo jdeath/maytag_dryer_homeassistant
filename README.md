@@ -111,6 +111,29 @@ sensor:
         friendly_name: "Dryer Temperature"
         value_template: "{{ state_attr('sensor.maytag_dryer_xxxx', 'temperature') }}"
 ```
+
+Automation to check lint trap:
+My dryer now has the check airflow/lint trap error message sometimes. You can set an automation to notify you when this happens. Moving the laundry off the front of the vent helps
+```
+alias: Dryer Check Lint
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - sensor.maytag_dryer_wprXXXXXXXXX
+    attribute: airflow
+    from:
+      - "0"
+    to:
+      - "1"
+conditions: []
+actions:
+  - data:
+      message: Dryer Check Lint Trap
+    action: notify.mobile_app_myiphone
+mode: single
+```
+
 ### Troubleshooting
 If you have model Dyrer model `MED6230HW1` , you need to comment out line 169:
 
